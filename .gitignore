@@ -1,0 +1,18 @@
+# Node.js
+node_modules
+package-lock.json
+
+# Angular
+angular.json
+yarn.lock
+
+# Python
+__pycache__
+.env
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+
+# GitHub Actions
+.github/workflows
