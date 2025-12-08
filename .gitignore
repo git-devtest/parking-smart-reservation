@@ -1,6 +1,9 @@
 # Node.js
 node_modules
 package-lock.json
+backend/node_modules
+frontend/node_modules
+.env
 
 # Angular
 angular.json
@@ -8,7 +11,6 @@ yarn.lock
 
 # Python
 __pycache__
-.env
 
 # Docker
 docker-compose.yml

@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  backend:
+    image: node:20
+    container_name: parking-backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: ["npm", "run", "start:dev"]
+    environment:
+      - TZ=America/Bogota
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/parking
+      - REDIS_HOST=redis
+      - ML_SERVICE_URL=http://ml:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+      - ml
+
+  frontend:
+    image: node:20
+    container_name: parking-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: ["npm", "start"]
+    environment:
+      - TZ=America/Bogota
+    ports:
+      - "4200:4200"
+
+  db:
+    image: postgres:16
+    container_name: parking-db
+    restart: always
+    environment:
+      - TZ=America/Bogota
+      - PGTZ=America/Bogota
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=parking
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./docker/timezone:/etc/timezone:ro
+      - ./docker/localtime:/etc/localtime:ro
+
+  redis:
+    image: redis:7
+    container_name: parking-redis
+    environment:
+      - TZ=America/Bogota
+    ports:
+      - "6379:6379"
+
+  ml:
+    image: python:3.11
+    container_name: parking-ml
+    working_dir: /app
+    volumes:
+      - ./ml:/app
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      - TZ=America/Bogota
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:
